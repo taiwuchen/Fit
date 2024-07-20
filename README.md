@@ -23,7 +23,8 @@ The app is organized into three main sections:
 ### 2. Outfits
 
 - Current weather information display
-- Style preference options (e.g. formal/informal)
+- Outfit recommendations shown
+- Style preference options (e.g. formal/informal, color, etc)
 - "Generate Outfit" button
 - View of generated outfit suggestions with AI-created images
 
