@@ -24,7 +24,7 @@ struct ContentView: View {
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage? //@Binding property wrapper allows the parent view(ImagePicker) to pass a reference to its state, so the ImagePicker can update it when an image is selected.
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode) var presentationMode // Dismiss the image picker when an image is selected or the user cancels
     var sourceType: UIImagePickerController.SourceType
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
