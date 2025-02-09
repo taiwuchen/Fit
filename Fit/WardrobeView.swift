@@ -24,6 +24,7 @@ struct WardrobeView: View {
     var body: some View {
         NavigationView {
             ScrollView {
+                // Your main content is contained in a VStack.
                 VStack {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(clothingItems) { item in
@@ -49,14 +50,17 @@ struct WardrobeView: View {
                             isActionSheetPresented = true
                         })
                     }
-                    
-                    // Weather info view at the bottom.
-                    WeatherInfoView()
-                        .padding(.top, 20)
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("Wardrobe")
+            // Use safeAreaInset to ensure the WeatherInfoView always sits above the tab bar.
+            .safeAreaInset(edge: .bottom) {
+                WeatherInfoView()
+                    .padding(.horizontal)
+                    // Optionally, add a background to blend with the rest of your UI.
+                    .background(Color(UIColor.systemBackground))
+            }
             .actionSheet(isPresented: $isActionSheetPresented) {
                 ActionSheet(
                     title: Text("Add Clothing Item"),
@@ -66,7 +70,7 @@ struct WardrobeView: View {
                             self.sourceType = .camera
                             self.isImagePickerPresented = true
                         },
-                        .default(Text("Choose Photos")) {
+                        .default(Text("Choose Multiple Photos")) {
                             self.isMultiImagePickerPresented = true
                         },
                         .cancel()
@@ -89,7 +93,7 @@ struct WardrobeView: View {
             }
         }
     }
-
+    
     /// Adds a new clothing item (single image) to the wardrobe.
     func addNewClothingItem(image: UIImage) {
         let newItem = ClothingItem(image: Image(uiImage: image), category: "New Item")
