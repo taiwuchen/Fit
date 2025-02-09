@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import PhotosUI  // Needed for PHPickerViewController
 
 struct ContentView: View {
     var body: some View {
@@ -23,8 +24,8 @@ struct ContentView: View {
 }
 
 struct ImagePicker: UIViewControllerRepresentable {
-    @Binding var image: UIImage? //@Binding property wrapper allows the parent view(ImagePicker) to pass a reference to its state, so the ImagePicker can update it when an image is selected.
-    @Environment(\.presentationMode) var presentationMode // Dismiss the image picker when an image is selected or the user cancels
+    @Binding var image: UIImage?  // For single image selection.
+    @Environment(\.presentationMode) var presentationMode
     var sourceType: UIImagePickerController.SourceType
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -47,9 +48,55 @@ struct ImagePicker: UIViewControllerRepresentable {
             self.parent = parent
         }
 
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        func imagePickerController(_ picker: UIImagePickerController,
+                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[.originalImage] as? UIImage {
                 parent.image = image
+            }
+            parent.presentationMode.wrappedValue.dismiss()
+        }
+    }
+}
+
+struct MultiImagePicker: UIViewControllerRepresentable {
+    @Binding var images: [UIImage]  // For multiple image selection.
+    @Environment(\.presentationMode) var presentationMode
+
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 5 // 0 allows unlimited selection.
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {
+        // No updates needed.
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        let parent: MultiImagePicker
+        
+        init(_ parent: MultiImagePicker) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            for result in results {
+                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+                        if let image = object as? UIImage {
+                            DispatchQueue.main.async {
+                                self.parent.images.append(image)
+                            }
+                        }
+                    }
+                }
             }
             parent.presentationMode.wrappedValue.dismiss()
         }
@@ -60,7 +107,9 @@ struct WardrobeView: View {
     @State private var clothingItems: [ClothingItem] = []
     @State private var isActionSheetPresented = false
     @State private var isImagePickerPresented = false
+    @State private var isMultiImagePickerPresented = false
     @State private var selectedImage: UIImage?
+    @State private var selectedImages: [UIImage] = []
     @State private var sourceType: UIImagePickerController.SourceType = .camera
 
     let columns = [
@@ -72,8 +121,24 @@ struct WardrobeView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(clothingItems) { item in
-                        ClothingItemView(item: item)
+                        ZStack(alignment: .topTrailing) {
+                            // Display the clothing item view.
+                            ClothingItemView(item: item)
+                            
+                            // Delete button overlay.
+                            Button(action: {
+                                deleteItem(item)
+                            }) {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.red)
+                                    .background(Color.white)
+                                    .clipShape(Circle())
+                            }
+                            .padding(5)
+                        }
                     }
+                    
+                    // Button to add a new clothing item.
                     AddClothingButton(action: {
                         isActionSheetPresented = true
                     })
@@ -82,17 +147,20 @@ struct WardrobeView: View {
             }
             .navigationTitle("Wardrobe")
             .actionSheet(isPresented: $isActionSheetPresented) {
-                ActionSheet(title: Text("Add Clothing Item"), message: Text("Choose a method to add a new item"), buttons: [
-                    .default(Text("Take Photo")) {
-                        self.sourceType = .camera
-                        self.isImagePickerPresented = true
-                    },
-                    .default(Text("Choose from Library")) {
-                        self.sourceType = .photoLibrary
-                        self.isImagePickerPresented = true
-                    },
-                    .cancel()
-                ])
+                ActionSheet(
+                    title: Text("Add Clothing Item"),
+                    message: Text("Choose a method to add a new item"),
+                    buttons: [
+                        .default(Text("Take Photo")) {
+                            self.sourceType = .camera
+                            self.isImagePickerPresented = true
+                        },
+                        .default(Text("Choose Photos")) {
+                            self.isMultiImagePickerPresented = true
+                        },
+                        .cancel()
+                    ]
+                )
             }
             .sheet(isPresented: $isImagePickerPresented, onDismiss: {
                 if let image = selectedImage {
@@ -101,13 +169,37 @@ struct WardrobeView: View {
             }) {
                 ImagePicker(image: $selectedImage, sourceType: sourceType)
             }
+            .sheet(isPresented: $isMultiImagePickerPresented, onDismiss: {
+                if !selectedImages.isEmpty {
+                    addNewClothingItems(images: selectedImages)
+                }
+            }) {
+                MultiImagePicker(images: $selectedImages)
+            }
         }
     }
 
+    /// Adds a new clothing item (single image) to the wardrobe.
     func addNewClothingItem(image: UIImage) {
         let newItem = ClothingItem(image: Image(uiImage: image), category: "New Item")
         clothingItems.append(newItem)
         selectedImage = nil
+    }
+    
+    /// Adds multiple new clothing items to the wardrobe.
+    func addNewClothingItems(images: [UIImage]) {
+        for image in images {
+            let newItem = ClothingItem(image: Image(uiImage: image), category: "New Item")
+            clothingItems.append(newItem)
+        }
+        selectedImages.removeAll()
+    }
+    
+    /// Deletes the specified clothing item from the wardrobe.
+    func deleteItem(_ item: ClothingItem) {
+        if let index = clothingItems.firstIndex(where: { $0.id == item.id }) {
+            clothingItems.remove(at: index)
+        }
     }
 }
 
