@@ -11,6 +11,10 @@
 		9129603C2C4753DA00F39D68 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9129603B2C4753DA00F39D68 /* ContentView.swift */; };
 		9129603E2C4753DB00F39D68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9129603D2C4753DB00F39D68 /* Assets.xcassets */; };
 		912960412C4753DB00F39D68 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 912960402C4753DB00F39D68 /* Preview Assets.xcassets */; };
+		91580AB42D5968D6005977C2 /* WeatherInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91580AB32D5968CD005977C2 /* WeatherInfoView.swift */; };
+		91580AB62D596A3D005977C2 /* WardrobeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91580AB52D596A2A005977C2 /* WardrobeView.swift */; };
+		91580AB82D596AF6005977C2 /* OutfitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91580AB72D596AEF005977C2 /* OutfitsView.swift */; };
+		91580ABA2D596B45005977C2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91580AB92D596B3D005977C2 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +23,10 @@
 		9129603B2C4753DA00F39D68 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9129603D2C4753DB00F39D68 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		912960402C4753DB00F39D68 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		91580AB32D5968CD005977C2 /* WeatherInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherInfoView.swift; sourceTree = "<group>"; };
+		91580AB52D596A2A005977C2 /* WardrobeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WardrobeView.swift; sourceTree = "<group>"; };
+		91580AB72D596AEF005977C2 /* OutfitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitsView.swift; sourceTree = "<group>"; };
+		91580AB92D596B3D005977C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +61,10 @@
 			children = (
 				912960392C4753DA00F39D68 /* FitApp.swift */,
 				9129603B2C4753DA00F39D68 /* ContentView.swift */,
+				91580AB92D596B3D005977C2 /* SettingsView.swift */,
+				91580AB52D596A2A005977C2 /* WardrobeView.swift */,
+				91580AB72D596AEF005977C2 /* OutfitsView.swift */,
+				91580AB32D5968CD005977C2 /* WeatherInfoView.swift */,
 				9129603D2C4753DB00F39D68 /* Assets.xcassets */,
 				9129603F2C4753DB00F39D68 /* Preview Content */,
 			);
@@ -138,7 +150,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9129603C2C4753DA00F39D68 /* ContentView.swift in Sources */,
+				91580AB82D596AF6005977C2 /* OutfitsView.swift in Sources */,
 				9129603A2C4753DA00F39D68 /* FitApp.swift in Sources */,
+				91580ABA2D596B45005977C2 /* SettingsView.swift in Sources */,
+				91580AB62D596A3D005977C2 /* WardrobeView.swift in Sources */,
+				91580AB42D5968D6005977C2 /* WeatherInfoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
